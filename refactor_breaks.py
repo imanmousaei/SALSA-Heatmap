@@ -15,7 +15,7 @@ scaffolds_current = pickle.load(open(args.directory+'/scaffolds_iteration_'+str(
 with open(args.directory+'/misasm_iteration_'+args.iteration+'.report','r') as f:
     for line in f:
         attrs = line.strip().split()
-#        print attrs
+#        print(attrs)
         if line[0] != 's':
             continue
         try:
@@ -26,7 +26,7 @@ with open(args.directory+'/misasm_iteration_'+args.iteration+'.report','r') as f
                 breakpoints[attrs[0]].append(int(attrs[i]))
         except:
             continue
-#print breakpoints
+#print(breakpoints)
 scaff_id = 1
 scaffolds_new = {}
 unitig_length = {}
@@ -43,7 +43,7 @@ def update_bed(expanded_scaffold):
             attrs = line.split()
             re_counts[attrs[0]] = (int(attrs[1]),int(attrs[2]))
 
-    #print re_counts
+    #print(re_counts)
 
     for key in expanded_scaffold:
         path = expanded_scaffold[key]
@@ -133,7 +133,7 @@ def update_bed(expanded_scaffold):
     o_lines = ""
     count = 0
     prev_line = ""
-    #print contig2scaffold
+    #print(contig2scaffold)
     #sys.exit(1)
     if True:
         output = open(args.directory+'/alignment_iteration_'+str(iteration)+'.bed','w')
@@ -215,30 +215,30 @@ for key in scaffolds_current:
         #old2new[key] = ['scaffold_'+str(scaff_id)]
         scaff_id += 1
     else:
-        #print key
+        #print(key)
         cum_len = 0
         breaks_list = []
         for i in xrange(1,len(scaffolds_current[key]),2):
             utg = scaffolds_current[key][i].split(':')[0]
             cum_len += unitig_length[utg]
             positions = breakpoints[key]
-            #print key, cum_len, positions
+            #print(key, cum_len, positions)
             for position in positions:
                 if cum_len > position - 10000 and cum_len < position + 10000:
-                    #print "found"
+                    #print("found")
                     breaks_list.append(i)
                     break
-        print breaks_list
+        print(breaks_list)
         if len(breaks_list) == 0:
             scaffolds_new['scaffold_'+str(scaff_id)] = scaffolds_current[key]
             scaff_id += 1
             continue
         if len(breaks_list) == 1:
-            #print 'here'
+            #print('here')
             first_part = scaffolds_current[key][:breaks_list[0]+1]
             second_part = scaffolds_current[key][breaks_list[0]+1:]
-            print "first part : " + str(first_part)
-            print "second part : " + str(second_part)
+            print("first part : " + str(first_part))
+            print("second part : " + str(second_part))
             first_id = 'scaffold_'+str(scaff_id)
             scaff_id += 1
             second_id = 'scaffold_'+str(scaff_id)
@@ -252,21 +252,21 @@ for key in scaffolds_current:
             prev_scaffold = ''
             for i in xrange(len(breaks_list)):
                 if i == len(breaks_list) - 1:
-                    print "start : " + str(prev)+"\tend : " + str(breaks_list[i]+1)
+                    print("start : " + str(prev)+"\tend : " + str(breaks_list[i]+1))
                     scaff = scaffolds_current[key][prev:breaks_list[i]+1]
-                    print "part : " + str(scaff)
+                    print("part : " + str(scaff))
                     scaffolds_new['scaffold_'+str(scaff_id)] = scaff
                     scaff_id += 1
-                    print "start : "+str(breaks_list[i]+1)
+                    print("start : "+str(breaks_list[i]+1))
                     scaff = scaffolds_current[key][breaks_list[i]+1:]
-                    print "part : " + str(scaff)
+                    print("part : " + str(scaff))
                     scaffolds_new['scaffold_'+str(scaff_id)] = scaff
                     avoid_file.write(prev_scaffold+'\t'+'scaffold_'+str(scaff_id)+'\n')
                     scaff_id += 1
                     continue
-                print  'start = '+str(prev)+'\tend = '+ str(breaks_list[i]+1)
+                print( 'start = '+str(prev)+'\tend = '+ str(breaks_list[i]+1))
                 scaff = scaffolds_current[key][prev:breaks_list[i]+1]
-                print "part : " + str(scaff)
+                print("part : " + str(scaff))
                 prev = breaks_list[i]+1
                 scaffolds_new['scaffold_'+str(scaff_id)] = scaff
                 if prev_scaffold == '':
@@ -275,8 +275,8 @@ for key in scaffolds_current:
                     avoid_file.write(prev_scaffold+'\t'+'scaffold_'+str(scaff_id)+'\n')
                     prev_scaffold = 'scaffold_'+str(scaff_id)
                 scaff_id += 1
-        print "================="
-#print scaffolds_new.keys()
+        print("=================")
+#print(scaffolds_new.keys())
 pickle.dump(scaffolds_new,open(args.directory+'/scaffolds_iteration_'+str(int(args.iteration) -1)+'.p','w'))
 update_bed(scaffolds_new)
 ofile = open(args.directory+'/misasm_'+args.iteration+'.DONE','w')
